@@ -1,0 +1,54 @@
+
+.tech-container {
+  display:flex;
+  //justify-content: space-around; no funciona flex-flow ANOTAR
+  width:1200px;
+  flex-flow: row wrap;
+}
+
+.tech {
+  background-color: $green;
+  border-radius:20px;
+  display: flex;
+  flex-direction: column;
+  font-size: $text-medium;
+  // PREGUNTAR A TINCHO por auto+before bug
+  height:350px;
+  justify-content: center;
+  margin: 25px 35px 0;
+  padding: 15px 15px 0;
+  position: relative;
+  width:210px;
+
+  &::before {
+    border: solid $green 2px;
+    border-radius: inherit;
+    content:'';
+    height:inherit;
+    left:-10px;
+    position: absolute;
+    top:-10px;
+    width:inherit;
+    z-index:-2;
+  }
+}
+
+.tech-p {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 10px 0 10px 0;
+  text-align: center;
+}
+
+.release {
+  font-weight: bold;
+}
+
+.logo-container {
+  height: auto;
+  max-width: $tech-logo-size;
+  max-height:$tech-logo-size;
+  width: auto;
+  margin-left:40px;
+}

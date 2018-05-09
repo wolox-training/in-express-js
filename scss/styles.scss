@@ -1,0 +1,16 @@
+$font: 'Roboto', sans-serif;
+$nav-height: 90px;
+$title-decoration-height: 90px;
+$title-decoration-width: 100px;
+$tech-logo-size: 100px;
+$text-big: 24px;
+$text-medium: 16px;
+$text-small: 12px;
+
+$container-max-width: 1400px;
+
+.container {
+  max-width: $container-max-width;
+  width: 100%;
+  margin: 100px auto;
+}
