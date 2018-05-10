@@ -1,0 +1,23 @@
+.footer {
+  align-items: center;
+  background-color: $blue;
+  display: flex;
+  flex-direction: column;
+  height: 150px;
+  justify-content: center;  
+  width: 100%;
+}
+
+.footer-title {
+  color: white;
+  font-size: $text-medium;
+  justify-content: center;
+  margin: 0 0 15px 25px;
+}
+
+.footer-p {
+  color:white;
+  text-align: right;
+  width:100%;
+  font-size: $text-small
+}
