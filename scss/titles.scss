@@ -12,10 +12,10 @@ body {
     background: url(assets/triangle.svg) no-repeat;
     content: '';
     height: $title-decoration-height;
-    left:-31%;
+    left: -31%;
     position: absolute;
-    top:-40px;
+    top: -40px;
     width: $title-decoration-width;
-    z-index:-2;
+    z-index: -2;
   }
 }

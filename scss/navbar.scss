@@ -1,10 +1,9 @@
 
 .nav {
   align-items: center;
-  background-color: white;
-  box-shadow: 0 3px 3px lightgrey;
+  background-color: $white;
+  box-shadow: 0 3px 3px $grey;
   display: inline-flex;
-  flex-direction: row;
   height: $nav-height;
   justify-content: space-between;
   padding: 0 25px;
