@@ -8,6 +8,7 @@ body {
   font-size: $text-big;
   margin: 50px 0;
   position: relative;
+  
   &::before {
     background: url(assets/triangle.svg) no-repeat;
     content: '';

@@ -1,22 +1,13 @@
-
 .container {
   max-width: 1400px;
   width: 100%;
   margin: 100px auto;
 }
-/*
-.tech-container {
-  display: flex;
-  flex-flow: row wrap;
-}*/
 
 .tech-container {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  grid-template-areas: 
-    "item sub-item sub-item"
-    "item sub-item sub-item";
   max-width: 1000px;
   margin: 0 auto;
 }
@@ -61,4 +52,24 @@
   max-height: $tech-logo-size;
   place-self: center;
   width: auto;
+}
+
+@media only screen and (max-width:800px) {
+  .container {
+    max-width: 210px;
+    width: 100%;
+  }
+
+  .tech-container {
+    display: grid;
+    grid-template-columns: 210px;
+    grid-template-rows: 1fr ;
+    max-width: 210px;
+  }
+
+  .big-tech {
+    width: 210px;
+    border-right: 0;
+  }
+
 }
