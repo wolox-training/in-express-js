@@ -9,14 +9,12 @@
   display: grid;
   grid-template-columns: repeat(3, max-content);
   grid-template-rows: repeat(2, max-content);
-  grid-template-areas: 
-    "item sub-item sub-item"
-    "item sub-item sub-item";
   max-width: 1000px;
   margin: 0 auto;
 }
 
 .tech {
+  align-items: center;
   display: flex;
   flex-direction: column;
   font-size: $text-medium;
@@ -28,10 +26,7 @@
 
     &:first-child {
       border-right: 2px solid $green;
-      grid-column-end: 2;
-      grid-column-start: 1;
-      grid-row-start: 1;
-      grid-row-end: end;
+      grid-row: 1 / end;
       height: 100%;
       justify-content: center;
       padding-right: 50px;
@@ -54,6 +49,5 @@
   height: auto;
   max-width: $tech-logo-size;
   max-height: $tech-logo-size;
-  place-self: center;
   width: auto;
 }
