@@ -1,3 +1,5 @@
+'use strict';
+
 const users = sequelize.define('users', {
   id: {
     type: Sequelize.INTEGER,
