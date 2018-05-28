@@ -51,3 +51,7 @@ node_modules
 config/.env
 docs/
 app/logger/logs/
+.sass-cache/
+.woloxci/
+aplication.css
+application.css.map

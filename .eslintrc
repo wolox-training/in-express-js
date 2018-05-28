@@ -72,6 +72,7 @@
     "no-restricted-modules": 0,                                   // http://eslint.org/docs/rules/no-restricted-modules
     "no-restricted-syntax": 0,                                    // http://eslint.org/docs/rules/no-restricted-syntax
     "no-sequences": 0,                                            // http://eslint.org/docs/rules/no-sequences
+    "no-shadow": "off",
     "no-spaced-func": 0,                                          // http://eslint.org/docs/rules/no-spaced-func
     "no-sync": 0,                                                 // http://eslint.org/docs/rules/no-sync
     "no-ternary": 0,                                              // http://eslint.org/docs/rules/no-ternary
