@@ -1,59 +1,72 @@
-const errors = require('../errors');
+'use strict';
+
+const bcrypt = require('bcryptjs');
 
 module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define(
-    'user',
+  const users = sequelize.define(
+    'users',
     {
-      firstName: {
-        type: DataTypes.STRING,
-        allowNull: false
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
       },
-      lastName: {
+      firstname: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        validate: {
+          notEmpty: true
+        }
+      },
+      lastname: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: true
+        }
       },
       username: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        validate: {
+          notEmpty: true
+        }
       },
       email: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        isUnique: true,
+        validate: {
+          notEmpty: true,
+          ends(toCheck) {
+            if (!toCheck.endsWith('@wolox.com') && !toCheck.endsWith('@wolox.com.ar')) {
+              throw new Error('E-mail does not belong to Wolox');
+            }
+          }
+        }
       },
       password: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        validate: {
+          isAlphanumeric: true,
+          notEmpty: true,
+          len: {
+            args: [8, 255],
+            msg: 'Password length is at least 8 characters with 32 characters maximum.'
+          }
+        }
       }
     },
     {
-      paranoid: true,
-      underscored: true
+      timestamps: false,
+      hooks: {
+        afterValidate: (users, options) => {
+          const aux = bcrypt.hashSync(users.password, bcrypt.genSaltSync(8), null);
+          users.password = aux;
+        }
+      }
     }
   );
-
-  User.associate = function(models) {};
-
-  User.createModel = user => {
-    return User.create(user).catch(err => {
-      throw errors.savingError(err.errors);
-    });
-  };
-
-  User.getOne = user => {
-    return User.findOne({ where: user }).catch(err => {
-      throw errors.databaseError(err.detail);
-    });
-  };
-
-  User.getByUsername = username => {
-    return User.getOne({ username });
-  };
-
-  User.prototype.updateModel = function(props) {
-    return this.update(props).catch(err => {
-      throw errors.savingError(err.errors);
-    });
-  };
-
-  return User;
+  return users;
 };

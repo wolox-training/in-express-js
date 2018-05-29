@@ -1,8 +1,6 @@
-const ENVIRONMENT = process.env.NODE_ENV || 'development';
+const dotenv = require('dotenv').config({ path: `${__dirname}/.env` });
 
-if (ENVIRONMENT !== 'production') {
-  require('dotenv').config();
-}
+const ENVIRONMENT = process.env.NODE_ENV || 'development';
 
 const configFile = `./${ENVIRONMENT}`;
 
@@ -26,7 +24,6 @@ const assignObject = (target, source) => {
     return target;
   }
 };
-
 const config = {
   common: {
     database: {
