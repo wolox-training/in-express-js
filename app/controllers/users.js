@@ -7,8 +7,6 @@ const bcrypt = require('bcryptjs'),
   logger = require('../logger');
 
 exports.signup = (req, res, next) => {
-  console.log('asd');
-  console.log(req.body);
   const userData = req.body;
   if (req.body) {
     User.findOne({
@@ -38,7 +36,7 @@ exports.signup = (req, res, next) => {
         }
       })
       .catch(error => {
-        logger.error(`Failed create attempt to account with invalid email: "${userData.email}"`);
+        logger.error(`Failed create attempt to account with invalid email: "${userData.email}". Error message:"${error}"`);
       });
   }
 };

@@ -24,7 +24,6 @@ const assignObject = (target, source) => {
     return target;
   }
 };
-console.log(process.env.DB_USERNAME);
 const config = {
   common: {
     database: {
