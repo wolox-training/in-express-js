@@ -48,8 +48,8 @@ module.exports = (sequelize, DataTypes) => {
       password: {
         type: DataTypes.STRING,
         allowNull: false,
+        isAlphanumeric: true,
         validate: {
-          isAlphanumeric: true,
           notEmpty: true,
           len: {
             args: [8, 255],
