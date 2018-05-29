@@ -1,7 +1,6 @@
 'use strict';
 
 const bcrypt = require('bcryptjs'),
-  sessionManager = require('../services/sessionManager'),
   User = require('../models').users,
   errors = require('../errors'),
   logger = require('../logger');
