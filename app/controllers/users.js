@@ -16,6 +16,7 @@ const emptyToNull = input => {
   return newInput;
 };
 
+
 const errorStruct = (error, res) => {
   let errorBag = [];
   if (error.errors) {

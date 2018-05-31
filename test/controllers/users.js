@@ -7,6 +7,7 @@ const chai = require('chai'),
 
 chai.use(chaiHttp);
 
+
 describe('/POST users', () => {
   const badPassword = {
     firstname: 'Nacho',
@@ -103,6 +104,7 @@ describe('/POST users', () => {
     username: 'myusername',
     email: 'ignacio.nieva@wolox.com.ar'
   };
+
   it('should fail sign up because of existent email', done => {
     User.create(data).then(createdUser => {
       chai
@@ -213,3 +215,4 @@ describe('/POST users/sessions', () => {
     });
   });
 });
+
