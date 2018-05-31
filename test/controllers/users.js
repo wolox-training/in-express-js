@@ -7,7 +7,7 @@ const chai = require('chai'),
 
 chai.use(chaiHttp);
 
-describe('/users POST', () => {
+describe('/POST users', () => {
   const badPassword = {
     firstname: 'Nacho',
     lastname: 'Nieva',
@@ -121,8 +121,8 @@ describe('/users POST', () => {
     username: 'myusername',
     email: 'ignacio.nieva@wolox.com.ar'
   };
-  User.create(data).then(createdUser => {
-    it('should fail sign up because of existent email', done => {
+  it('should fail sign up because of existent email', done => {
+    User.create(data).then(createdUser => {
       chai
         .request(server)
         .post('/users')
@@ -170,5 +170,63 @@ describe('/users POST', () => {
         dictum.chai(res, 'User sign up');
         done();
       });
+  });
+});
+describe('/POST users/sessions', () => {
+  const data = {
+    firstname: 'nacho',
+    lastname: 'Nieva',
+    password: 'password1',
+    username: 'myusername',
+    email: 'ignacio.nieva@wolox.com.ar'
+  };
+  const unToken =
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImlnbmFjaW8ubmlldmFAd29sb3guY29tLmFyIg.vj6mVvG0s75OvdoxTKmJTb7EXLEs2a8JkESx0Nv7Xcg';
+  const badPassword = {
+    email: 'ignacio.nieva@wolox.com.ar',
+    password: '1234'
+  };
+  const badEmail = {
+    email: 'kevin.temes@wolox.com.ar',
+    password: 'password1'
+  };
+  const correctUser = {
+    email: 'ignacio.nieva@wolox.com.ar',
+    password: 'password1'
+  };
+  it('should fail sign up because of incorrect password', done => {
+    User.create(data).then(createdUser => {
+      chai
+        .request(server)
+        .post('/users/sessions')
+        .send(badPassword)
+        .catch(err => {
+          err.should.have.status(400);
+        })
+        .then(() => done());
+    });
+  });
+  it('should fail sign up because of unexistent Email', done => {
+    chai
+      .request(server)
+      .post('/users/sessions')
+      .send(badEmail)
+      .catch(err => {
+        err.should.have.status(404);
+      })
+      .then(() => done());
+  });
+  it('should fail sign up because user is already logged in', done => {
+    User.create(data).then(createdUser => {
+      chai
+        .request(server)
+        .post('/users/sessions')
+        .send(correctUser)
+        .set('token', unToken)
+        .catch(err => {
+          err.should.have.status(400);
+        })
+        .then(() => done());
+    });
   });
 });
