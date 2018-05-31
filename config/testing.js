@@ -6,7 +6,7 @@ exports.config = {
       name: process.env.DB_NAME
     },
     session: {
-      secret: 'some-super-secret'
+      secret: process.env.NODE_API_SESSION_SECRET
     }
   }
 };
