@@ -96,24 +96,6 @@ describe('/POST users', () => {
       })
       .then(() => done());
   });
-});
-
-describe('/users POST', () => {
-  it('should fail sign up because of missing E-mail', done => {
-    chai
-      .request(server)
-      .post('/users')
-      .send({
-        firstname: 'Nacho',
-        lastname: 'Nieva',
-        password: 'password1',
-        username: 'myusername'
-      })
-      .catch(err => {
-        err.should.have.status(400);
-      })
-      .then(() => done());
-  });
   const data = {
     firstname: 'nacho',
     lastname: 'Nieva',
@@ -172,6 +154,7 @@ describe('/users POST', () => {
       });
   });
 });
+
 describe('/POST users/sessions', () => {
   const data = {
     firstname: 'nacho',
@@ -201,7 +184,7 @@ describe('/POST users/sessions', () => {
         .post('/users/sessions')
         .send(badPassword)
         .catch(err => {
-          err.should.have.status(400);
+          err.should.have.status(401);
         })
         .then(() => done());
     });

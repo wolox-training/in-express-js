@@ -25,6 +25,10 @@ const errorStruct = (error, res) => {
   }
 };
 
+const requiresNewToken = (token, email) => {
+  return (token && jwt.decode(token, config.common.session.secret) !== email) || !token;
+};
+
 exports.signup = (req, res, next) => {
   const userData = emptyToNull(req.body);
   User.create({
@@ -58,18 +62,14 @@ exports.signin = (req, res, next) => {
     }
   })
     .then(match => {
-      const secret = 'n4ch0n13v4';
-      if (
-        (req.headers.token && jwt.decode(req.headers.token, secret) !== signinTry.email) ||
-        !req.headers.token
-      ) {
+      if (requiresNewToken(req.headers.token, signinTry.email)) {
         if (match) {
           if (bcrypt.compareSync(signinTry.password, match.password)) {
-            const token = jwt.encode(signinTry.email, secret);
+            const token = jwt.encode(signinTry.email, config.common.session.NODE_API_SESSION_SECRET);
             res.send(token).status(200);
             logger.info(`User logged in with email: '${signinTry.email}'`);
           } else {
-            res.send('Incorrect password').status(400);
+            res.send('Incorrect password').status(401);
             logger.error(`Failed attempt to log in with email: '${signinTry.email}', incorrect password`);
           }
         } else {
@@ -77,7 +77,7 @@ exports.signin = (req, res, next) => {
           logger.error(`Failed attempt to log in with email: '${signinTry.email}', does not exist`);
         }
       } else {
-        res.send('already logged in').status(401);
+        res.send('already logged in').status(400);
         logger.error(`Failed attempt to log in with email: '${signinTry.email}', already logged in`);
       }
     })
