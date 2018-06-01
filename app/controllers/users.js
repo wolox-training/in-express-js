@@ -15,8 +15,6 @@ const emptyToNull = input => {
 
   return newInput;
 };
-
-
 const errorStruct = (error, res) => {
   let errorBag = [];
   if (error.errors) {
@@ -66,7 +64,7 @@ exports.signin = (req, res, next) => {
       if (requiresNewToken(req.headers.token, signinTry.email)) {
         if (match) {
           if (bcrypt.compareSync(signinTry.password, match.password)) {
-            const token = jwt.encode(signinTry.email, config.common.session.NODE_API_SESSION_SECRET);
+            const token = jwt.encode(signinTry.email, config.common.session.secret);
             res.send(token).status(200);
             logger.info(`User logged in with email: '${signinTry.email}'`);
           } else {
@@ -81,6 +79,22 @@ exports.signin = (req, res, next) => {
         res.send('already logged in').status(400);
         logger.error(`Failed attempt to log in with email: '${signinTry.email}', already logged in`);
       }
+    })
+    .catch(error => {
+      return errorStruct(error, res);
+    });
+};
+
+exports.listUsers = (req, res, next) => {
+  User.findAll({
+    attributes: {
+      exclude: ['password', 'username'],
+      offset: req.body.offset ? req.body.offset : 0,
+      limit: req.body.limit ? req.body.limit : 10
+    }
+  })
+    .then(stack => {
+      res.send(stack).status(200);
     })
     .catch(error => {
       return errorStruct(error, res);

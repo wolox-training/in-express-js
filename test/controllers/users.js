@@ -7,7 +7,6 @@ const chai = require('chai'),
 
 chai.use(chaiHttp);
 
-
 describe('/POST users', () => {
   const badPassword = {
     firstname: 'Nacho',
@@ -214,5 +213,71 @@ describe('/POST users/sessions', () => {
         .then(() => done());
     });
   });
+  it('should work and log in', done => {
+    User.create(data).then(createdUser => {
+      chai
+        .request(server)
+        .post('/users/sessions')
+        .send(correctUser)
+        .then(res => {
+          res.should.have.status(200);
+          dictum.chai(res, 'User sign in');
+          done();
+        });
+    });
+  });
 });
 
+describe('/GET users', () => {
+  beforeEach(() => {
+    const newUser = {
+      firstname: 'nacho',
+      lastname: 'Nieva',
+      password: 'password1',
+      username: 'myusername',
+      email: 'ignacio.nieva@wolox.com.ar'
+    };
+    const userOne = {
+      firstname: 'kevin',
+      lastname: 'temes',
+      password: 'password2',
+      username: 'kevinusername',
+      email: 'kevin.temes@wolox.com.ar'
+    };
+    User.create(newUser).then(res => {
+      User.create(userOne).then(res => {});
+    });
+  });
+  const correctUser = {
+    email: 'ignacio.nieva@wolox.com.ar',
+    password: 'password1'
+  };
+  it('should fail listing users because user is not logged in', done => {
+    chai
+      .request(server)
+      .get('/users')
+      .send()
+      .catch(err => {
+        err.should.have.status(401);
+      })
+      .then(() => done());
+  });
+  it('should work listing users', done => {
+    chai
+      .request(server)
+      .post('/users/sessions')
+      .send(correctUser)
+      .then(res => {
+        chai
+          .request(server)
+          .get('/users?offset=1')
+          .send()
+          .set('token', res.text)
+          .then(res => {
+            res.should.have.status(200);
+            dictum.chai(res, 'User sign up');
+            done();
+          });
+      });
+  });
+});
