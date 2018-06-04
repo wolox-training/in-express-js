@@ -88,7 +88,7 @@ exports.signin = (req, res, next) => {
 exports.listUsers = (req, res, next) => {
   User.findAll({
     attributes: {
-      exclude: ['password', 'username'],
+      exclude: ['id', 'password', 'username'],
       offset: req.body.offset ? req.body.offset : 0,
       limit: req.body.limit ? req.body.limit : 10
     }

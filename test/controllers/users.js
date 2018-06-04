@@ -229,23 +229,23 @@ describe('/POST users/sessions', () => {
 });
 
 describe('/GET users', () => {
+  const newUser = {
+    firstname: 'nacho',
+    lastname: 'Nieva',
+    password: 'password1',
+    username: 'myusername',
+    email: 'ignacio.nieva@wolox.com.ar'
+  };
+  const userOne = {
+    firstname: 'kevin',
+    lastname: 'temes',
+    password: 'password2',
+    username: 'kevinusername',
+    email: 'kevin.temes@wolox.com.ar'
+  };
   beforeEach(() => {
-    const newUser = {
-      firstname: 'nacho',
-      lastname: 'Nieva',
-      password: 'password1',
-      username: 'myusername',
-      email: 'ignacio.nieva@wolox.com.ar'
-    };
-    const userOne = {
-      firstname: 'kevin',
-      lastname: 'temes',
-      password: 'password2',
-      username: 'kevinusername',
-      email: 'kevin.temes@wolox.com.ar'
-    };
     User.create(newUser).then(res => {
-      User.create(userOne).then(res => {});
+      User.create(userOne);
     });
   });
   const correctUser = {
@@ -275,6 +275,19 @@ describe('/GET users', () => {
           .set('token', res.text)
           .then(res => {
             res.should.have.status(200);
+            res.body.should.exist;
+            res.body[0].should.include(
+              {
+                firstname: 'nacho',
+                lastname: 'Nieva',
+                email: 'ignacio.nieva@wolox.com.ar'
+              },
+              {
+                firstname: 'kevin',
+                lastname: 'temes',
+                email: 'kevin.temes@wolox.com.ar'
+              }
+            );
             dictum.chai(res, 'User sign up');
             done();
           });

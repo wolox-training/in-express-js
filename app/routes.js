@@ -1,5 +1,4 @@
 const users = require('./controllers/users'),
-  userValidator = require('./middlewares/user'),
   auth = require('./middlewares/auth');
 
 exports.init = app => {
