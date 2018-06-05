@@ -88,13 +88,13 @@ exports.signin = (req, res, next) => {
 exports.listUsers = (req, res, next) => {
   User.findAll({
     attributes: {
-      exclude: ['id', 'password', 'username'],
-      offset: req.body.offset ? req.body.offset : 0,
-      limit: req.body.limit ? req.body.limit : 10
-    }
+      exclude: ['id', 'password', 'username']
+    },
+    offset: req.query.offset ? req.query.offset : 0,
+    limit: req.query.limit ? req.query.limit : 10
   })
     .then(stack => {
-      res.send(stack).status(200);
+      return res.status(200).send({ users: stack });
     })
     .catch(error => {
       return errorStruct(error, res);

@@ -162,7 +162,7 @@ describe('/POST users/sessions', () => {
     lastname: 'Nieva',
     password: 'password1',
     username: 'myusername',
-    email: 'ignacio.nieva@wolox.com.ar'
+    email: 'asd.2@wolox.com.ar'
   };
   const unToken =
     'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImlnbmFjaW8ubmlldmFAd29sb3guY29tLmFyIg.vj6mVvG0s75OvdoxTKmJTb7EXLEs2a8JkESx0Nv7Xcg';
@@ -228,7 +228,7 @@ describe('/POST users/sessions', () => {
   });
 });
 
-describe('/GET users', () => {
+describe('/GET users/list', () => {
   const newUser = {
     firstname: 'nacho',
     lastname: 'Nieva',
@@ -245,24 +245,14 @@ describe('/GET users', () => {
   };
   beforeEach(() => {
     User.create(newUser).then(res => {
-      User.create(userOne);
+      User.create(userOne).then(res2 => {});
     });
   });
   const correctUser = {
     email: 'ignacio.nieva@wolox.com.ar',
     password: 'password1'
   };
-  it('should fail listing users because user is not logged in', done => {
-    chai
-      .request(server)
-      .get('/users')
-      .send()
-      .catch(err => {
-        err.should.have.status(401);
-      })
-      .then(() => done());
-  });
-  it('should work listing users', done => {
+  it('should work listing users with offset', done => {
     chai
       .request(server)
       .post('/users/sessions')
@@ -270,27 +260,47 @@ describe('/GET users', () => {
       .then(res => {
         chai
           .request(server)
-          .get('/users?offset=1')
+          .get('/users/list?offset=0')
+          .send()
+          .set('token', res.text)
+          .then(res => {
+            res.should.have.status(200);
+            res.body.users.should.exist;
+            console.log(res.body.users);
+            res.body.users.length.should.equal(2);
+            dictum.chai(res, 'User sign up');
+            done();
+          });
+      });
+  });
+  it('should work listing users with limit', done => {
+    chai
+      .request(server)
+      .post('/users/sessions')
+      .send(correctUser)
+      .then(res => {
+        chai
+          .request(server)
+          .get('/users/list?limit=1')
           .send()
           .set('token', res.text)
           .then(res => {
             res.should.have.status(200);
             res.body.should.exist;
-            res.body[0].should.include(
-              {
-                firstname: 'nacho',
-                lastname: 'Nieva',
-                email: 'ignacio.nieva@wolox.com.ar'
-              },
-              {
-                firstname: 'kevin',
-                lastname: 'temes',
-                email: 'kevin.temes@wolox.com.ar'
-              }
-            );
+            res.body.users.length.should.equal(1);
             dictum.chai(res, 'User sign up');
             done();
           });
       });
+  });
+  it('should fail listing users because user is not logged in', done => {
+    chai
+      .request(server)
+      .get('/users/list')
+      .send()
+      .catch(err => {
+        err.should.have.status(401);
+      })
+      .then(() => done());
   });
 });
