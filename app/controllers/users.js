@@ -100,3 +100,32 @@ exports.listUsers = (req, res, next) => {
       return errorStruct(error, res);
     });
 };
+
+exports.goAdmin = (req, res, next) => {
+  const userData = emptyToNull(req.body);
+  const whereClause = {
+    firstname: userData.firstname,
+    lastname: userData.lastname,
+    username: userData.username,
+    password: userData.password,
+    email: userData.email
+  };
+  User.findOne({
+    attributes: ['isAdmin'],
+    where: whereClause
+  }).then(match => {
+    if (match) {
+      console.log(match);
+      /*
+      User.update(
+        {
+          isAdmin: 'true'
+        },
+        {
+          where: whereClause
+        }
+      );
+      */
+    }
+  });
+};
