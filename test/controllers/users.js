@@ -243,9 +243,11 @@ describe('/GET users', () => {
     username: 'kevinusername',
     email: 'kevin.temes@wolox.com.ar'
   };
-  beforeEach(() => {
+  beforeEach(done => {
     User.create(newUser).then(res => {
-      User.create(userOne);
+      User.create(userOne).then(res2 => {
+        done();
+      });
     });
   });
   const correctUser = {
@@ -291,6 +293,126 @@ describe('/GET users', () => {
             dictum.chai(res, 'User sign up');
             done();
           });
+      });
+  });
+});
+
+describe('/POST admin/users', () => {
+  const newUser = {
+    firstname: 'nacho',
+    lastname: 'Nieva',
+    password: 'password1',
+    username: 'myusername',
+    email: 'ignacio.nieva@wolox.com.ar',
+    isadmin: true
+  };
+  const userOne = {
+    firstname: 'kevin',
+    lastname: 'temes',
+    password: 'password2',
+    username: 'kevinusername',
+    email: 'kevin.temes@wolox.com.ar',
+    isadmin: false
+  };
+  const userTwo = {
+    firstname: 'try',
+    lastname: 'try',
+    password: 'password3',
+    username: 'try3user',
+    email: 'try.3@wolox.com.ar'
+  };
+  beforeEach(done => {
+    User.create(newUser).then(res => {
+      User.create(userOne).then(res2 => {
+        done();
+      });
+    });
+  });
+  const correctUser = {
+    email: 'ignacio.nieva@wolox.com.ar',
+    password: 'password1'
+  };
+  const notAdmin = {
+    email: 'kevin.temes@wolox.com.ar',
+    password: 'password2'
+  };
+  it('should fail goAdmin because user is not logged in', done => {
+    chai
+      .request(server)
+      .post('/admin/users')
+      .send(userOne)
+      .catch(err => {
+        err.should.have.status(401);
+      })
+      .then(() => done());
+  });
+  it('should work goAdmin, updating existing row to isadmin=true', done => {
+    chai
+      .request(server)
+      .post('/users/sessions')
+      .send(correctUser)
+      .then(res => {
+        chai
+          .request(server)
+          .post('/admin/users')
+          .send(userOne)
+          .set('token', res.text)
+          .then(res => {
+            res.should.have.status(200);
+            res.body.should.exist;
+            res.body.user.should.include({
+              firstname: 'kevin',
+              lastname: 'temes',
+              username: 'kevinusername',
+              email: 'kevin.temes@wolox.com.ar',
+              isadmin: true
+            });
+            dictum.chai(res, 'existing user is now admin');
+            done();
+          });
+      });
+  });
+  it('should work goAdmin, creating new user with isadmin=true', done => {
+    chai
+      .request(server)
+      .post('/users/sessions')
+      .send(correctUser)
+      .then(res => {
+        chai
+          .request(server)
+          .post('/admin/users')
+          .send(userTwo)
+          .set('token', res.text)
+          .then(res => {
+            res.should.have.status(200);
+            res.body.should.exist;
+            res.body.user.should.include({
+              firstname: 'try',
+              lastname: 'try',
+              username: 'try3user',
+              email: 'try.3@wolox.com.ar'
+            });
+            dictum.chai(res, 'new user is now admin');
+            done();
+          });
+      });
+  });
+  it('should fail goAdmin, null parameter', done => {
+    chai
+      .request(server)
+      .post('/users/sessions')
+      .send(correctUser)
+      .then(res => {
+        chai
+          .request(server)
+          .post('/admin/users')
+          .send()
+          .set('token', res.text)
+          .catch(err => {
+            err.should.have.status(400);
+            err.should.have.property('message');
+          })
+          .then(() => done());
       });
   });
 });

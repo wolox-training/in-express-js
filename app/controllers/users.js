@@ -28,26 +28,51 @@ const requiresNewToken = (token, email) => {
   return (token && jwt.decode(token, config.common.session.secret) !== email) || !token;
 };
 
-exports.signup = (req, res, next) => {
-  const userData = emptyToNull(req.body);
-  User.create({
-    firstname: userData.firstname,
-    lastname: userData.lastname,
-    username: userData.username,
-    password: userData.password,
-    email: userData.email
+const transaction = (req, res, next) => {
+  User.findOne({
+    where: {
+      email: req.email
+    }
   })
-    .then(createdUser => {
-      if (createdUser) {
-        res.send(createdUser).status(200);
-        logger.info(`created account with email: '${userData.email}'`);
+    .then(match => {
+      if (match) {
+        match
+          .update({
+            isadmin: true
+          })
+          .then(updated => {
+            res.send({ user: updated }).status(200);
+            next();
+          });
       } else {
-        res.status(400);
+        User.create({
+          firstname: req.firstname,
+          lastname: req.lastname,
+          username: req.username,
+          password: req.password,
+          email: req.email,
+          isadmin: req.isadmin ? req.isadmin : false
+        })
+          .then(createdUser => {
+            if (createdUser) {
+              res.send({ user: createdUser }).status(200);
+              logger.info(`created account with email: '${req.email}'`);
+              return next();
+            }
+          })
+          .catch(error => {
+            return errorStruct(error, res);
+          });
       }
     })
-    .catch(error => {
-      return errorStruct(error, res);
+    .catch(err => {
+      return errorStruct(err, res);
     });
+};
+
+exports.signup = (req, res, next) => {
+  const userData = emptyToNull(req.body);
+  transaction(userData, res, next);
 };
 
 exports.signin = (req, res, next) => {
@@ -103,29 +128,10 @@ exports.listUsers = (req, res, next) => {
 
 exports.goAdmin = (req, res, next) => {
   const userData = emptyToNull(req.body);
-  const whereClause = {
-    firstname: userData.firstname,
-    lastname: userData.lastname,
-    username: userData.username,
-    password: userData.password,
-    email: userData.email
-  };
-  User.findOne({
-    attributes: ['isAdmin'],
-    where: whereClause
-  }).then(match => {
-    if (match) {
-      console.log(match);
-      /*
-      User.update(
-        {
-          isAdmin: 'true'
-        },
-        {
-          where: whereClause
-        }
-      );
-      */
-    }
-  });
+  userData.isadmin = true;
+  if (userData.email) {
+    transaction(userData, res, next);
+  } else {
+    res.status(errors.invalidParameter.statusCode).send(errors.invalidParameter.message);
+  }
 };

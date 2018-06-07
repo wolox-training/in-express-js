@@ -56,6 +56,11 @@ module.exports = (sequelize, DataTypes) => {
             msg: 'Password length is at least 8 characters with 32 characters maximum.'
           }
         }
+      },
+      isadmin: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
       }
     },
     {
