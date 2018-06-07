@@ -36,23 +36,12 @@ const transaction = (req, res, next) => {
   })
     .then(match => {
       if (match) {
-        match
-          .update({
-            isadmin: true
-          })
-          .then(updated => {
-            res.send({ user: updated }).status(200);
-            next();
-          });
+        match.update(req).then(updated => {
+          res.send({ user: updated }).status(200);
+          next();
+        });
       } else {
-        User.create({
-          firstname: req.firstname,
-          lastname: req.lastname,
-          username: req.username,
-          password: req.password,
-          email: req.email,
-          isadmin: req.isadmin ? req.isadmin : false
-        })
+        User.create(req)
           .then(createdUser => {
             if (createdUser) {
               res.send({ user: createdUser }).status(200);

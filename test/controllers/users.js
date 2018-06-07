@@ -268,7 +268,6 @@ describe('/GET users/list', () => {
           .then(res => {
             res.should.have.status(200);
             res.body.users.should.exist;
-            console.log(res.body.users);
             res.body.users.length.should.equal(2);
             dictum.chai(res, 'User sign up');
             done();
@@ -423,6 +422,33 @@ describe('/POST admin/users', () => {
             err.should.have.property('message');
           })
           .then(() => done());
+      });
+  });
+  it('should work goAdmin, updating existing row to isadmin=true and changing username', done => {
+    userOne.username = 'kevinNEWusername';
+    chai
+      .request(server)
+      .post('/users/sessions')
+      .send(correctUser)
+      .then(res => {
+        chai
+          .request(server)
+          .post('/admin/users')
+          .send(userOne)
+          .set('token', res.text)
+          .then(res => {
+            res.should.have.status(200);
+            res.body.should.exist;
+            res.body.user.should.include({
+              firstname: 'kevin',
+              lastname: 'temes',
+              username: 'kevinNEWusername',
+              email: 'kevin.temes@wolox.com.ar',
+              isadmin: true
+            });
+            dictum.chai(res, 'existing user is now admin and changed username');
+            done();
+          });
       });
   });
 });
