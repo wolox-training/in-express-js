@@ -20,3 +20,12 @@ exports.isLoggedIn = (req, res, next) => {
     return res.status(errors.invalidCredentialError.statusCode).send(errors.invalidCredentialError.message);
   }
 };
+
+exports.isAdminLoggedIn = (req, res, next) => {
+  const isAdmin = req.body.user.dataValues.isadmin;
+  if (isAdmin) {
+    next();
+  } else {
+    res.status(errors.isNotAdminError.statusCode).send(errors.isNotAdminError.message);
+  }
+};

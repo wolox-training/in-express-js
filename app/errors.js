@@ -17,3 +17,13 @@ exports.invalidOffset = {
   statusCode: 400,
   message: 'Invalid Offset requested'
 };
+
+exports.invalidParameter = {
+  statusCode: 400,
+  message: 'Invalid parameter sent'
+};
+
+exports.isNotAdmin = {
+  statusCode: 401,
+  message: 'Invalid admin credentials, you have to be admin to use this'
+};
