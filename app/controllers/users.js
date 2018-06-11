@@ -4,7 +4,9 @@ const bcrypt = require('bcryptjs'),
   User = require('../models').users,
   errors = require('../errors'),
   jwt = require('jwt-simple'),
+  request = require('request'),
   config = require('../../config'),
+  httpInteractor = require('../interactors/serviceRequest'),
   logger = require('../logger');
 
 const emptyToNull = input => {
@@ -123,4 +125,16 @@ exports.goAdmin = (req, res, next) => {
   } else {
     res.status(errors.invalidParameter.statusCode).send(errors.invalidParameter.message);
   }
+};
+
+exports.listAlbums = (req, res, next) => {
+  const url = 'albums';
+  httpInteractor
+    .serviceRequest({ url }, res, next)
+    .then(rest => {
+      res.send(rest.body).status(rest.status);
+    })
+    .catch(err => {
+      return errorStruct(err, res);
+    });
 };
