@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs'),
   request = require('request'),
   config = require('../../config'),
   httpInteractor = require('../interactors/serviceRequest'),
+  utils = require('../controllers/utils'),
   logger = require('../logger');
 
 const emptyToNull = input => {
@@ -16,14 +17,6 @@ const emptyToNull = input => {
   });
 
   return newInput;
-};
-const errorStruct = (error, res) => {
-  let errorBag = [];
-  if (error.errors) {
-    errorBag = error.errors.map(err => err.message);
-    logger.error(`A database error occured when attempting a user signup. Details: ${errorBag}.`);
-    return res.status(400).send(errorBag);
-  }
 };
 
 const requiresNewToken = (token, email) => {
@@ -52,12 +45,12 @@ const transaction = (req, res, next) => {
             }
           })
           .catch(error => {
-            return errorStruct(error, res);
+            return utils.errorStruct(error, res);
           });
       }
     })
     .catch(err => {
-      return errorStruct(err, res);
+      return utils.errorStruct(err, res);
     });
 };
 
@@ -97,7 +90,7 @@ exports.signin = (req, res, next) => {
       }
     })
     .catch(error => {
-      return errorStruct(error, res);
+      return utils.errorStruct(error, res);
     });
 };
 
@@ -113,7 +106,7 @@ exports.listUsers = (req, res, next) => {
       return res.status(200).send({ users: stack });
     })
     .catch(error => {
-      return errorStruct(error, res);
+      return utils.errorStruct(error, res);
     });
 };
 
@@ -125,16 +118,4 @@ exports.goAdmin = (req, res, next) => {
   } else {
     res.status(errors.invalidParameter.statusCode).send(errors.invalidParameter.message);
   }
-};
-
-exports.listAlbums = (req, res, next) => {
-  const url = 'albums';
-  httpInteractor
-    .serviceRequest({ url }, res, next)
-    .then(rest => {
-      res.send(rest.body).status(rest.status);
-    })
-    .catch(err => {
-      return errorStruct(err, res);
-    });
 };
