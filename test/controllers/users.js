@@ -2,6 +2,7 @@ const chai = require('chai'),
   chaiHttp = require('chai-http'),
   dictum = require('dictum.js'),
   server = require('../../app'),
+  nock = require('nock'),
   User = require('../../app/models').users,
   should = chai.should();
 
