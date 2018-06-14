@@ -8,4 +8,5 @@ exports.init = app => {
   app.get('/users/list', auth.isLoggedIn, users.listUsers);
   app.post('/admin/users', [auth.isLoggedIn, auth.isAdminLoggedIn], users.goAdmin);
   app.get('/albums', auth.isLoggedIn, albums.listAlbums);
+  app.post('/albums/purchase', auth.isLoggedIn, albums.purchaseAlbum);
 };
