@@ -6,6 +6,20 @@ const errors = require('../errors'),
   Album = require('../models').albums,
   logger = require('../logger');
 
+const retrieveAlbums = (req, res, next) => {
+  Album.findAll({
+    where: {
+      userid: req.params.id
+    }
+  })
+    .then(rest => {
+      res.send({ albums: rest }).status(200);
+    })
+    .catch(error => {
+      return utils.errorStruct(error, res);
+    });
+};
+
 exports.listAlbums = (req, res, next) => {
   httpInteractor
     .serviceRequest(req, res, next)
@@ -51,4 +65,20 @@ exports.purchaseAlbum = (req, res, next) => {
     .catch(err => {
       return utils.errorStruct(err, res);
     });
+};
+
+exports.listPurchasedAlbums = (req, res, next) => {
+  const sessionId = parseInt(req.body.user.id);
+  const userId = parseInt(req.params.id);
+  console.log('entro', req.body.user.isadmin, sessionId, userId);
+  if (req.body.user.isadmin === true) {
+    retrieveAlbums(req, res, next);
+  } else {
+    if (sessionId === userId) {
+      retrieveAlbums(req, res, next);
+    } else {
+      res.send(errors.isNotAdmin.message).status(errors.isNotAdmin.statusCode);
+      next();
+    }
+  }
 };
