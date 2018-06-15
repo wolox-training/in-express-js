@@ -403,6 +403,7 @@ describe('/GET users/albums/:id/photos', () => {
     email: 'try@wolox.com.ar',
     password: 'passwordtry'
   };
+  
   it('should fail listing purchased photos because user is not logged in', done => {
     chai
       .request(server)
@@ -412,6 +413,7 @@ describe('/GET users/albums/:id/photos', () => {
       })
       .then(() => done());
   });
+
   it('should work by listing album photos', done => {
     const correctResponse = nock('https://jsonplaceholder.typicode.com')
       .get('/albums/1')
