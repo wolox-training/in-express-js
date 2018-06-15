@@ -10,4 +10,5 @@ exports.init = app => {
   app.get('/albums', auth.isLoggedIn, albums.listAlbums);
   app.post('/albums/purchase', auth.isLoggedIn, albums.purchaseAlbum);
   app.get('/users/:id/albums', auth.isLoggedIn, albums.listPurchasedAlbums);
+  app.get('/users/albums/:id/photos', auth.isLoggedIn, albums.listPurchasedPhotos);
 };
