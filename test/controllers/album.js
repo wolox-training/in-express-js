@@ -167,3 +167,190 @@ describe('/POST albums/purchase', () => {
       });
   });
 });
+
+describe('/GET users/:id/albums', () => {
+  const adminUser = {
+    firstname: 'nacho',
+    lastname: 'Nieva',
+    password: 'password1',
+    username: 'myusername',
+    email: 'ignacio.nieva@wolox.com.ar',
+    isadmin: true
+  };
+  const newUser = {
+    firstname: 'try',
+    lastname: 'try',
+    password: 'passwordtry',
+    username: 'tryusername',
+    email: 'try@wolox.com.ar',
+    isadmin: false
+  };
+  const tryUser = {
+    firstname: 'try2',
+    lastname: 'try2',
+    password: 'passwordtry2',
+    username: 'tryusername2',
+    email: 'try2@wolox.com.ar',
+    isadmin: false
+  };
+  const tryAdminUser = {
+    firstname: 'try3',
+    lastname: 'try3',
+    password: 'passwordtry3',
+    username: 'tryusername3',
+    email: 'try3@wolox.com.ar',
+    isadmin: true
+  };
+  beforeEach(done => {
+    User.create(newUser).then(res => {
+      User.create(adminUser).then(res2 => {
+        done();
+      });
+    });
+  });
+  const correctUser = {
+    email: 'ignacio.nieva@wolox.com.ar',
+    password: 'password1'
+  };
+  const notAdminUser = {
+    email: 'try@wolox.com.ar',
+    password: 'passwordtry'
+  };
+  it('should fail listing purchased albums because user is not logged in', done => {
+    chai
+      .request(server)
+      .get('/users/1/albums')
+      .catch(err => {
+        err.should.have.status(401);
+      })
+      .then(() => done());
+  });
+  it('should work by listing albums', done => {
+    const correctResponse = nock('https://jsonplaceholder.typicode.com')
+      .get('/albums/1')
+      .reply(200, {
+        userId: 1,
+        id: 1,
+        title: 'quidem molestiae enim'
+      });
+    chai
+      .request(server)
+      .post('/users/sessions')
+      .send(notAdminUser)
+      .then(res => {
+        chai
+          .request(server)
+          .post('/albums/purchase?id=1')
+          .set('token', res.text)
+          .then(res2 => {
+            chai
+              .request(server)
+              .get(`/users/${res2.body.album.userid}/albums`)
+              .set('token', res.text)
+              .then(res => {
+                res.should.have.status(200);
+                res.body.should.exist;
+                dictum.chai(res, 'list of purchased albums');
+                done();
+              });
+          });
+      });
+  });
+  it('should work by listing albums', done => {
+    const correctResponse = nock('https://jsonplaceholder.typicode.com')
+      .get('/albums/1')
+      .reply(200, {
+        userId: 1,
+        id: 1,
+        title: 'quidem molestiae enim'
+      });
+    chai
+      .request(server)
+      .post('/users/sessions')
+      .send(correctUser)
+      .then(res => {
+        chai
+          .request(server)
+          .post('/albums/purchase?id=1')
+          .set('token', res.text)
+          .then(res2 => {
+            chai
+              .request(server)
+              .get(`/users/${res2.body.album.userid}/albums`)
+              .set('token', res.text)
+              .then(res => {
+                res.should.have.status(200);
+                res.body.should.exist;
+                dictum.chai(res, 'list of purchased albums');
+                done();
+              });
+          });
+      });
+  });
+  it('should work by listing albums', done => {
+    const correctResponse = nock('https://jsonplaceholder.typicode.com')
+      .get('/albums/1')
+      .reply(200, {
+        userId: 1,
+        id: 1,
+        title: 'quidem molestiae enim'
+      });
+    User.create(tryUser).then(inserted => {
+      chai
+        .request(server)
+        .post('/users/sessions')
+        .send(notAdminUser)
+        .then(res => {
+          chai
+            .request(server)
+            .post('/albums/purchase?id=1')
+            .set('token', res.text)
+            .then(res2 => {
+              chai
+                .request(server)
+                .get(`/users/${inserted.userid}/albums`)
+                .set('token', res.text)
+                .then(res => {
+                  res.should.have.status(200);
+                  res.body.should.exist;
+                  dictum.chai(res, 'list of purchased albums');
+                  done();
+                });
+            });
+        });
+    });
+  });
+  it('should fail by listing albums from admin user', done => {
+    const correctResponse = nock('https://jsonplaceholder.typicode.com')
+      .get('/albums/1')
+      .reply(200, {
+        userId: 1,
+        id: 1,
+        title: 'quidem molestiae enim'
+      });
+    User.create(tryAdminUser).then(inserted => {
+      chai
+        .request(server)
+        .post('/users/sessions')
+        .send(notAdminUser)
+        .then(res => {
+          chai
+            .request(server)
+            .post('/albums/purchase?id=1')
+            .set('token', res.text)
+            .then(res2 => {
+              chai
+                .request(server)
+                .get(`/users/${inserted.userid}/albums`)
+                .set('token', res.text)
+                .then(res => {
+                  res.should.have.status(200);
+                  res.body.should.exist;
+                  dictum.chai(res, 'list of purchased albums');
+                  done();
+                });
+            });
+        });
+    });
+  });
+});
