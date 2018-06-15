@@ -403,7 +403,7 @@ describe('/GET users/albums/:id/photos', () => {
     email: 'try@wolox.com.ar',
     password: 'passwordtry'
   };
-  it('should fail listing purchased albums because user is not logged in', done => {
+  it('should fail listing purchased photos because user is not logged in', done => {
     chai
       .request(server)
       .get('/users/albums/1/photos')
@@ -412,7 +412,7 @@ describe('/GET users/albums/:id/photos', () => {
       })
       .then(() => done());
   });
-  it.only('should work by listing albums', done => {
+  it('should work by listing album photos', done => {
     const correctResponse = nock('https://jsonplaceholder.typicode.com')
       .get('/albums/1')
       .reply(200, {
@@ -420,6 +420,17 @@ describe('/GET users/albums/:id/photos', () => {
         id: 1,
         title: 'quidem molestiae enim'
       });
+    const correctPhotoResponse = nock('https://jsonplaceholder.typicode.com')
+      .get('/albums/1/photos')
+      .reply(200, [
+        {
+          albumId: 1,
+          id: 1,
+          title: 'accusamus beatae ad facilis cum similique qui sunt',
+          url: 'http://placehold.it/600/92c952',
+          thumbnailUrl: 'http://placehold.it/150/92c952'
+        }
+      ]);
     chai
       .request(server)
       .post('/users/sessions')

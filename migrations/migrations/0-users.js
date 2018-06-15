@@ -7,11 +7,11 @@ module.exports = {
         allowNull: false,
         primaryKey: true
       },
-      firstName: {
+      firstname: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      lastName: {
+      lastname: {
         type: Sequelize.STRING,
         allowNull: false
       },
@@ -29,11 +29,20 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      createdAt: {
+      isadmin: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      createdat: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW
       },
-      updatedAt: {
+      updatedat: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW
+      },
+      lastvalidation: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW
       }
