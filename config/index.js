@@ -34,7 +34,8 @@ const config = {
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       albumsUrl: process.env.ALBUMS_URL,
-      albumsListEndpoint: process.env.ALBUMS_LIST_ENDPOINT
+      albumsListEndpoint: process.env.ALBUMS_LIST_ENDPOINT,
+      photosListEndpoint: process.env.PHOTOS_LIST_ENDPOINT
     },
     api: {
       bodySizeLimit: process.env.API_BODY_SIZE_LIMIT,
