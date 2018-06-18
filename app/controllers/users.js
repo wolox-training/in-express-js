@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs'),
   User = require('../models').users,
   errors = require('../errors'),
   jwt = require('jwt-simple'),
+  moment = require('moment'),
   request = require('request'),
   config = require('../../config'),
   httpInteractor = require('../interactors/serviceRequest'),
@@ -73,7 +74,10 @@ exports.signin = (req, res, next) => {
       if (requiresNewToken(req.headers.token, signinTry.email)) {
         if (match) {
           if (bcrypt.compareSync(signinTry.password, match.password)) {
-            const token = jwt.encode(signinTry.email, config.common.session.secret);
+            const token = jwt.encode(
+              { email: signinTry.email, created_at: new Date(), valid_until: moment().add(6, 'M') },
+              config.common.session.secret
+            );
             res.send(token).status(200);
             logger.info(`User logged in with email: '${signinTry.email}'`);
           } else {

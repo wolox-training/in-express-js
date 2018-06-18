@@ -4,7 +4,6 @@ const errors = require('../errors'),
   httpInteractor = require('../interactors/serviceRequest'),
   utils = require('../controllers/utils'),
   Album = require('../models').albums,
-
   config = require('../../config'),
   logger = require('../logger');
 
@@ -88,6 +87,7 @@ exports.listPurchasedAlbums = (req, res, next) => {
     }
   }
 };
+
 exports.listPurchasedPhotos = (req, res, next) => {
   req.body.serviceEndpoint = `${serviceAlbumUrl(req.params.id)}/${config.common.database.photosListEndpoint}`;
   Album.findAll({
@@ -110,4 +110,3 @@ exports.listPurchasedPhotos = (req, res, next) => {
       return utils.errorStruct(error, res);
     });
 };
-

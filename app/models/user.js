@@ -61,6 +61,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false
+      },
+      lastvalidation: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
       }
     },
     {

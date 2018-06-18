@@ -1,16 +1,32 @@
 const User = require('../models').users,
   jwt = require('jwt-simple'),
+  moment = require('moment'),
   errors = require('../errors'),
+  logger = require('../logger'),
   config = require('../../config');
+
+const tokenIsValid = (token, user) => {
+  return (
+    new Date(user.lastvalidation) < new Date(token.created_at) && new Date() < new Date(token.valid_until)
+  );
+};
 
 exports.isLoggedIn = (req, res, next) => {
   const token = req.headers.token;
   if (token) {
-    const userEmail = jwt.decode(token, config.common.session.secret);
+    const decoded = jwt.decode(token, config.common.session.secret);
+    const userEmail = decoded.email;
     User.findOne({ where: { email: userEmail } }).then(match => {
       if (match) {
-        req.body.user = match;
-        next();
+        if (tokenIsValid(decoded, match)) {
+          req.body.user = match;
+          next();
+        } else {
+          logger.error(`Your session has expired, please sign in again`);
+          return res
+            .status(errors.invalidCredentialError.statusCode)
+            .send(errors.invalidCredentialError.message);
+        }
       } else {
         res.status(errors.notFound.statusCode).send(errors.notFound.message);
         next();
