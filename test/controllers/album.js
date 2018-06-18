@@ -145,8 +145,8 @@ describe('/POST albums/purchase', () => {
       });
   });
   it('should fail purchasing album because user already owns it', done => {
-    const correctResponse2 = nock('https://jsonplaceholder.typicode.com/albums')
-      .get('/1')
+    const correctResponse2 = nock(config.common.database.albumsUrl)
+      .get('/albums/1')
       .reply(200, {
         userId: 1,
         id: 1,

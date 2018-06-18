@@ -453,3 +453,65 @@ describe('/POST admin/users', () => {
       });
   });
 });
+
+describe('/POST users/sessions/invalidate_all', () => {
+  const newUser = {
+    firstname: 'nacho',
+    lastname: 'Nieva',
+    password: 'password1',
+    username: 'myusername',
+    email: 'ignacio.nieva@wolox.com.ar',
+    isadmin: true
+  };
+  beforeEach(done => {
+    User.create(newUser).then(res => {
+      done();
+    });
+  });
+  const correctUser = {
+    email: 'ignacio.nieva@wolox.com.ar',
+    password: 'password1'
+  };
+  it('should fail invalidating session because user is not logged in', done => {
+    chai
+      .request(server)
+      .post('/users/sessions/invalidate_all')
+      .send(newUser)
+      .catch(err => {
+        err.should.have.status(401);
+      })
+      .then(() => done());
+  });
+  it('should work disabling session', done => {
+    chai
+      .request(server)
+      .post('/users/sessions')
+      .send(correctUser)
+      .then(res => {
+        chai
+          .request(server)
+          .post('/users/sessions/invalidate_all')
+          .send()
+          .set('token', res.text)
+          .then(res => {
+            res.should.have.status(200);
+            dictum.chai(res, 'Session was destroyed');
+            done();
+          });
+      });
+  });
+  it('should fail because session expired', done => {
+    const expiredToken =
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImlnbmFjaW8ubmlldmFAd29sb3guY29tLmFyIiwiY3JlYXRlZF9hdCI6IjIwMTgtMDYtMTVUMTk6MDM6NTguNjM4WiIsInZhbGlkX3VudGlsIjoiMjAxOC0xMi0xNVQxOTowMzo1OC42MzhaIn0.jypjP_gE_kYeCr3jzveRaC_-8Hs0fcJkKl2AQvDnd6U';
+    chai
+      .request(server)
+      .post('/users/sessions/invalidate_all')
+      .set('token', expiredToken)
+      .send(correctUser)
+      .catch(err => {
+        err.should.have.status(401);
+        err.should.have.property('message');
+      })
+      .then(() => done());
+  });
+});

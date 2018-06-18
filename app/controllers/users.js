@@ -21,7 +21,7 @@ const emptyToNull = input => {
 };
 
 const requiresNewToken = (token, email) => {
-  return (token && jwt.decode(token, config.common.session.secret) !== email) || !token;
+  return (token && jwt.decode(token, config.common.session.secret).email !== email) || !token;
 };
 
 const transaction = (req, res, next) => {
@@ -121,5 +121,18 @@ exports.goAdmin = (req, res, next) => {
     transaction(userData, res, next);
   } else {
     res.status(errors.invalidParameter.statusCode).send(errors.invalidParameter.message);
+  }
+};
+
+exports.invalidateSession = (req, res, next) => {
+  if (jwt.decode(req.headers.token, config.common.session.secret).email === req.body.user.email) {
+    delete req.headers.token;
+    if (!req.headers.token) {
+      res.send('session invalidated').status(200);
+    } else {
+      res.send('Error').status(500);
+    }
+  } else {
+    res.status(errors.invalidCredentialError.statusCode).send(errors.invalidCredentialError.message);
   }
 };
