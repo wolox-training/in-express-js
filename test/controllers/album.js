@@ -5,6 +5,7 @@ const chai = require('chai'),
   nock = require('nock'),
   User = require('../../app/models').users,
   Album = require('../../app/models').albums,
+  config = require('../../config'),
   should = chai.should();
 
 describe('/GET albums', () => {
@@ -35,7 +36,7 @@ describe('/GET albums', () => {
       .then(() => done());
   });
   it('should work by listing albums', done => {
-    const correctResponse = nock('https://jsonplaceholder.typicode.com')
+    const correctResponse = nock(config.common.database.albumsUrl)
       .get('/albums')
       .reply(200, [
         {
@@ -62,7 +63,7 @@ describe('/GET albums', () => {
       });
   });
   it('should list be empty', done => {
-    const badResponse = nock('https://jsonplaceholder.typicode.com')
+    const badResponse = nock(config.common.database.albumsUrl)
       .get('/albums')
       .reply(200, []);
     chai
@@ -119,7 +120,7 @@ describe('/POST albums/purchase', () => {
       .then(() => done());
   });
   it('should work by purchasing album id:2', done => {
-    const correctResponse = nock('https://jsonplaceholder.typicode.com')
+    const correctResponse = nock(config.common.database.albumsUrl)
       .get('/albums/2')
       .reply(200, {
         userId: 2,
@@ -226,7 +227,7 @@ describe('/GET users/:id/albums', () => {
       .then(() => done());
   });
   it('should work by listing albums', done => {
-    const correctResponse = nock('https://jsonplaceholder.typicode.com')
+    const correctResponse = nock(config.common.database.albumsUrl)
       .get('/albums/1')
       .reply(200, {
         userId: 1,
@@ -257,7 +258,7 @@ describe('/GET users/:id/albums', () => {
       });
   });
   it('should work by listing albums', done => {
-    const correctResponse = nock('https://jsonplaceholder.typicode.com')
+    const correctResponse = nock(config.common.database.albumsUrl)
       .get('/albums/1')
       .reply(200, {
         userId: 1,
@@ -288,7 +289,7 @@ describe('/GET users/:id/albums', () => {
       });
   });
   it('should work by listing albums', done => {
-    const correctResponse = nock('https://jsonplaceholder.typicode.com')
+    const correctResponse = nock(config.common.database.albumsUrl)
       .get('/albums/1')
       .reply(200, {
         userId: 1,
@@ -321,7 +322,7 @@ describe('/GET users/:id/albums', () => {
     });
   });
   it('should fail by listing albums from admin user', done => {
-    const correctResponse = nock('https://jsonplaceholder.typicode.com')
+    const correctResponse = nock(config.common.database.albumsUrl)
       .get('/albums/1')
       .reply(200, {
         userId: 1,
@@ -413,14 +414,14 @@ describe('/GET users/albums/:id/photos', () => {
       .then(() => done());
   });
   it('should work by listing album photos', done => {
-    const correctResponse = nock('https://jsonplaceholder.typicode.com')
+    const correctResponse = nock(config.common.database.albumsUrl)
       .get('/albums/1')
       .reply(200, {
         userId: 1,
         id: 1,
         title: 'quidem molestiae enim'
       });
-    const correctPhotoResponse = nock('https://jsonplaceholder.typicode.com')
+    const correctPhotoResponse = nock(config.common.database.albumsUrl)
       .get('/albums/1/photos')
       .reply(200, [
         {
