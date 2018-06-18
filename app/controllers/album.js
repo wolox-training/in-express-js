@@ -4,7 +4,6 @@ const errors = require('../errors'),
   httpInteractor = require('../interactors/serviceRequest'),
   utils = require('../controllers/utils'),
   Album = require('../models').albums,
-
   config = require('../../config'),
   logger = require('../logger');
 
